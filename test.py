@@ -6,7 +6,7 @@ import os
 batch_size=64
 image_size=32
 num_diffusion_timesteps=1000
-learn_rate = 1e-3
+learn_rate = 1e-5 # tried e3 and it breaks
 start_epoch = 0
 epochs = 100
 
@@ -63,13 +63,6 @@ if os.path.exists(model_path):
     model.load_state_dict(torch.load(model_path, map_location=device))
     print("Model loaded successfully!")
     
-    # Also try to load checkpoint for resuming training    
-    if os.path.exists(checkpoint_path):
-        checkpoint = torch.load(checkpoint_path, map_location=device)
-        model.load_state_dict(checkpoint['model_state_dict'])
-        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        start_epoch = checkpoint['epoch'] + 1
-        print(f"Resuming training from epoch {start_epoch}")
 
 
 
@@ -110,7 +103,7 @@ for epoch in range(epochs):
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': avg_loss,
-        }, f"checkpoints/checkpoint_epoch_{epoch+1}.pth")
+        }, checkpoint_path+f"/checkpoint_epoch_{epoch+1}.pth")
         torch.save( model.state_dict(), model_path)
 
 torch.save(

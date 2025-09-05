@@ -10,7 +10,7 @@ num_diffusion_timesteps = 1000
 n_samples = 8
 output_dir = "/mnt/d/temp/generated"
 os.makedirs(output_dir, exist_ok=True)
-model_path = "/mnt/e/work/gpenv/data/diffuOutputs/diffunet_mnist.pth"
+model_path = "/mnt/e/work/gpvenv/data/diffuOutputs/diffunet_mnist.pth"
 
 # Device
 if torch.cuda.is_available():

@@ -28,7 +28,7 @@ transform = transforms.Compose(
 )
 
 train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST(root="/mnt/e/work/gpenv/traindata", train=True, download=True, transform=transform),
+    datasets.MNIST(root="/mnt/e/work/gpvenv/traindata", train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
 )
@@ -53,7 +53,7 @@ alphas_cumprod = torch.cumprod(alphas, dim=0)
 sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
 sqrt_recip_alphas_cumprod = torch.sqrt(1.0 - alphas_cumprod)
 
-baseDataPath = "/mnt/e/work/gpenv/data/diffuOutputs"
+baseDataPath = "/mnt/e/work/gpvenv/data/diffuOutputs"
 os.makedirs(baseDataPath, exist_ok=True)
 checkpoint_path = baseDataPath + "/checkpoints"
 os.makedirs(checkpoint_path, exist_ok=True)

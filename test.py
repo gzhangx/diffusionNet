@@ -81,7 +81,8 @@ for epoch in range(epochs):
         at = at + 1
         imgs = data.to(device)
         noise = torch.randn_like(imgs)
-        t = torch.randint(0, num_diffusion_timesteps, (batch_size,), device=device)
+        #must use imgs.size(0) not batch_size, because last batch can be smaller
+        t = torch.randint(0, num_diffusion_timesteps, (imgs.size(0),), device=device)
 
         noised_imgs = (
             sqrt_alphas_cumprod[t, None, None, None] * imgs

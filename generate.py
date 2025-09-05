@@ -3,6 +3,8 @@ import deepinv
 import os
 from torchvision.utils import save_image
 import matplotlib.pyplot as plt
+#import matplotlib
+#matplotlib.use('TkAgg')
 
 # Settings
 image_size = 32
@@ -39,7 +41,7 @@ def sample(model, n_samples, image_size, num_diffusion_timesteps):
     with torch.no_grad():
         x = torch.randn(n_samples, 1, image_size, image_size, device=device)
         for t in reversed(range(num_diffusion_timesteps)):
-            t_tensor = torch.full((n_samples,), t, device=device, dtype=torch.long)
+            t_tensor = torch.full((n_samples,), t/1000, device=device, dtype=torch.long)
             # Predict noise
             pred_noise = model(x, t_tensor, type_t="timestep")
             # Remove noise
@@ -63,6 +65,6 @@ for i in range(n_samples):
     plt.imshow(samples[i].cpu().squeeze(), cmap="gray")
     plt.title(f"Sample {i}")
     plt.axis('off')
-    plt.show()
+    #plt.show()
 
 print(f"Images saved to {output_dir}")

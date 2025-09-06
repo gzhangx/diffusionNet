@@ -5,10 +5,9 @@ import deepinv
 import os
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
-from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
-
+from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS, TEMP_OUT_DIR
 # Settings
-output_dir = "/mnt/d/temp/denoise_steps"
+output_dir = TEMP_OUT_DIR
 os.makedirs(output_dir, exist_ok=True)
 
 # Device and model
@@ -46,7 +45,7 @@ plt.savefig(f"{output_dir}/original_mnist.png")
 plt.close()
 
 # Denoising the selected image and saving intermediate steps
-def denoise_steps(model, img, num_diffusion_timesteps, save_every=100):
+def denoise_steps(model, img, num_diffusion_timesteps, save_every=10):
     with torch.no_grad():
         # Add initial noise
         x = img.clone()
@@ -59,6 +58,7 @@ def denoise_steps(model, img, num_diffusion_timesteps, save_every=100):
         )
         steps = []
         for t in reversed(range(num_diffusion_timesteps)):
+        #for t in (range(num_diffusion_timesteps)):
             t_tensor = torch.full((1,), t, device=device, dtype=torch.long)
             pred_noise = model(x, t_tensor, type_t="timestep")
             alpha = alphas[t]
@@ -71,6 +71,7 @@ def denoise_steps(model, img, num_diffusion_timesteps, save_every=100):
                 noise = torch.zeros_like(x)
             x = (1 / sqrt_alpha_cumprod) * (x - sqrt_one_minus_alpha_cumprod * pred_noise)
             x += torch.sqrt(betas[t]) * noise
+            print('t='+ str(t))
             if t % save_every == 0 or t == num_diffusion_timesteps - 1 or t == 0:
                 steps.append((num_diffusion_timesteps - t, x.cpu().squeeze().numpy()))
                 plt.imshow(x.cpu().squeeze(), cmap="gray")
@@ -80,5 +81,5 @@ def denoise_steps(model, img, num_diffusion_timesteps, save_every=100):
                 plt.close()
         return steps
 
-steps = denoise_steps(model, img, num_diffusion_timesteps, save_every=100)
+steps = denoise_steps(model, img, num_diffusion_timesteps, save_every=10)
 print(f"Saved denoising steps to {output_dir}")

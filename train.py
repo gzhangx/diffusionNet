@@ -2,7 +2,7 @@ import torch
 import deepinv
 from torchvision import datasets, transforms
 import os
-from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
+from common_config import get_device, create_model, BASE_DIR_PATH, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
 
 batch_size = 64
 learn_rate = 1e-5 # tried e3 and it breaks
@@ -25,7 +25,7 @@ transform = transforms.Compose(
 )
 
 train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST(root="/mnt/e/work/gpvenv/traindata", train=True, download=True, transform=transform),
+    datasets.MNIST(root=BASE_DIR_PATH + "/inputs", train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
 )

@@ -1,34 +1,22 @@
 import torch
 import deepinv
-from torchvision import datasets, transforms
-import os
-from common_config import get_device, create_model, BASE_DIR_PATH, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
 
-batch_size = 64
+import os
+from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS, train_loader
+
 learn_rate = 1e-5 # tried e3 and it breaks
 start_epoch = 0
 epochs = 100
 
 device = get_device()
-image_size = IMAGE_SIZE
 num_diffusion_timesteps = NUM_DIFFUSION_TIMESTEPS
 model_path = MODEL_PATH
 
 print("Using device:", device)
 
-transform = transforms.Compose(
-    [
-        transforms.Resize(image_size),
-        transforms.ToTensor(),
-        transforms.Normalize((0.0,), (1.0,)),
-    ]
-)
 
-train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST(root=BASE_DIR_PATH + "/inputs", train=True, download=True, transform=transform),
-    batch_size=batch_size,
-    shuffle=True,
-)
+
+
 
 print(f"Number of batches in train_loader: {len(train_loader)}")
 # Or, to get the total number of samples:
@@ -47,14 +35,7 @@ alphas_cumprod = torch.cumprod(alphas, dim=0)
 sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
 sqrt_recip_alphas_cumprod = torch.sqrt(1.0 - alphas_cumprod)
 
-baseDataPath = os.path.dirname(model_path)
-os.makedirs(baseDataPath, exist_ok=True)
-checkpoint_path = os.path.join(baseDataPath, "checkpoints")
-os.makedirs(checkpoint_path, exist_ok=True)
-if os.path.exists(model_path):
-    print(f"Loading existing model from {model_path}")
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    print("Model loaded successfully!")
+
     
 
 

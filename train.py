@@ -2,20 +2,17 @@ import torch
 import deepinv
 from torchvision import datasets, transforms
 import os
+from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
 
-batch_size=64
-image_size=32
-num_diffusion_timesteps=1000
+batch_size = 64
 learn_rate = 1e-5 # tried e3 and it breaks
 start_epoch = 0
 epochs = 100
 
-if torch.cuda.is_available():
-    device = "cuda"
-elif torch.backends.mps.is_available():
-    device = "mps"
-else:
-    device = "cpu"
+device = get_device()
+image_size = IMAGE_SIZE
+num_diffusion_timesteps = NUM_DIFFUSION_TIMESTEPS
+model_path = MODEL_PATH
 
 print("Using device:", device)
 
@@ -33,16 +30,13 @@ train_loader = torch.utils.data.DataLoader(
     shuffle=True,
 )
 
-
 print(f"Number of batches in train_loader: {len(train_loader)}")
 # Or, to get the total number of samples:
 print(f"Total number of samples: {len(train_loader.dataset)}")
 
-
-model = deepinv.models.DiffUNet(in_channels=1, out_channels=1, pretrained=None).to(device)
+model = create_model(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=learn_rate)
 mse = deepinv.loss.MSE()
-
 
 #https://github.com/hojonathanho/diffusion/blob/master/diffusion_tf/diffusion_utils_2.py
 beta_start = 1e-4
@@ -53,11 +47,10 @@ alphas_cumprod = torch.cumprod(alphas, dim=0)
 sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
 sqrt_recip_alphas_cumprod = torch.sqrt(1.0 - alphas_cumprod)
 
-baseDataPath = "/mnt/e/work/gpvenv/data/diffuOutputs"
+baseDataPath = os.path.dirname(model_path)
 os.makedirs(baseDataPath, exist_ok=True)
-checkpoint_path = baseDataPath + "/checkpoints"
+checkpoint_path = os.path.join(baseDataPath, "checkpoints")
 os.makedirs(checkpoint_path, exist_ok=True)
-model_path = baseDataPath + "/diffunet_mnist.pth"
 if os.path.exists(model_path):
     print(f"Loading existing model from {model_path}")
     model.load_state_dict(torch.load(model_path, map_location=device))

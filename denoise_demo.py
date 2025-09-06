@@ -1,29 +1,22 @@
 
+
 import torch
 import deepinv
 import os
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
+from common_config import get_device, create_model, MODEL_PATH, IMAGE_SIZE, NUM_DIFFUSION_TIMESTEPS
 
 # Settings
-image_size = 32
-num_diffusion_timesteps = 1000
 output_dir = "/mnt/d/temp/denoise_steps"
 os.makedirs(output_dir, exist_ok=True)
-model_path = "/mnt/e/work/gpvenv/data/diffuOutputs/diffunet_mnist.pth"
 
-# Device
-if torch.cuda.is_available():
-    device = "cuda"
-elif torch.backends.mps.is_available():
-    device = "mps"
-else:
-    device = "cpu"
-
-# Model
-model = deepinv.models.DiffUNet(in_channels=1, out_channels=1, pretrained=None).to(device)
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.eval()
+# Device and model
+device = get_device()
+model = create_model(device)
+image_size = IMAGE_SIZE
+num_diffusion_timesteps = NUM_DIFFUSION_TIMESTEPS
+model_path = MODEL_PATH
 
 # Diffusion params
 beta_start = 1e-4

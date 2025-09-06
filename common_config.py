@@ -14,6 +14,11 @@ def get_device():
 BASE_DIR_PATH = '../trainData/data'
 MODEL_PATH = BASE_DIR_PATH + "/diffuOutputs/diffunet_mnist.pth"
 
+TEMP_OUT_DIR = '/mnt/d/temp/denoise_steps'
+
+if get_device() == 'mps':
+    TEMP_OUT_DIR = BASE_DIR_PATH + '/temp'
+
 # Image size and diffusion steps
 IMAGE_SIZE = 32
 NUM_DIFFUSION_TIMESTEPS = 1000

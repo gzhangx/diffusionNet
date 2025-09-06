@@ -33,9 +33,17 @@ transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.0,), (1.0,)),
 ])
+
 mnist = datasets.MNIST(root="/mnt/e/work/gpvenv/traindata", train=True, download=True, transform=transform)
 img, label = mnist[0]  # Pick the first image
 img = img.unsqueeze(0).to(device)  # Shape: (1, 1, 32, 32)
+
+# Save the first image before denoising
+plt.imshow(img.cpu().squeeze(), cmap="gray")
+plt.title("Original MNIST Image")
+plt.axis('off')
+plt.savefig(f"{output_dir}/original_mnist.png")
+plt.close()
 
 # Denoising the selected image and saving intermediate steps
 def denoise_steps(model, img, num_diffusion_timesteps, save_every=100):
